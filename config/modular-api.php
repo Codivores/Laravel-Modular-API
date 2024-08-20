@@ -46,6 +46,14 @@ return [
             'expires' => env('MODULAR_API_FEATURE_RATE_LIMITING_EXPIRES_IN_MIN', 1),
         ],
 
+        'hash_ids' => [
+            'enabled' => env('MODULAR_API_FEATURE_HASH_IDS_ENABLED', false),
+            'salt' => env('MODULAR_API_FEATURE_HASH_IDS_KEY', env('APP_KEY')),
+            'length' => env('MODULAR_API_FEATURE_HASH_IDS_LENGTH', 20),
+            'alphabet' => env('MODULAR_API_FEATURE_HASH_IDS_ALPHABET',
+                'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'),
+        ],
+
     ],
 
 ];
