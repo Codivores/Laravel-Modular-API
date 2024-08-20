@@ -1,0 +1,41 @@
+{
+    "name": "codivores/laravel-modular-api",
+    "description": "A Laravel package for creating JSON:API-compliant REST APIs, with support for versioning and multiple sub-APIs, organized into standalone, modular services.",
+    "homepage": "https://github.com/codivores/laravel-modular-api",
+    "keywords": [
+        "laravel",
+        "laravel-modular-api",
+        "JSON-API",
+        "api",
+        "rest",
+        "json"
+    ],
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "codivores",
+            "email": "tech@codivores.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "illuminate/contracts": "^11.0"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.10"
+    },
+    "autoload": {
+        "psr-4": {
+            "Codivores\\LaravelModularApi\\": "src/"
+        }
+    },
+    "scripts": {
+        "format": "vendor/bin/pint"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
