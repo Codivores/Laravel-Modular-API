@@ -30,6 +30,13 @@
             "Codivores\\LaravelModularApi\\": "src/"
         }
     },
+    "extra": {
+        "laravel": {
+            "aliases": {
+                "LaravelModularApi": "Codivores\\LaravelModularApi\\Facades\\LaravelModularApi"
+            }
+        }
+    },
     "scripts": {
         "format": "vendor/bin/pint"
     },
