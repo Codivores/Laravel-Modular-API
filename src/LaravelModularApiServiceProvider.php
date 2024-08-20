@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Codivores\LaravelModularApi;
 
+use Codivores\LaravelModularApi\Providers\RouteServiceProvider;
 use Illuminate\Support\ServiceProvider;
 
 class LaravelModularApiServiceProvider extends ServiceProvider
@@ -17,6 +18,8 @@ class LaravelModularApiServiceProvider extends ServiceProvider
             __DIR__.'/../config/modular-api.php',
             'modular-api'
         );
+
+        $this->app->register(RouteServiceProvider::class);
     }
 
     /**
