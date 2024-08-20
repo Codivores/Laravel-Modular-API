@@ -32,4 +32,20 @@ return [
 
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Features configuration
+    |--------------------------------------------------------------------------
+    */
+
+    'features' => [
+
+        'rate_limiting' => [
+            'enabled' => env('MODULAR_API_FEATURE_RATE_LIMITING_ENABLED', false),
+            'attempts' => env('MODULAR_API_FEATURE_RATE_LIMITING_ATTEMPTS_PER_MIN', 30),
+            'expires' => env('MODULAR_API_FEATURE_RATE_LIMITING_EXPIRES_IN_MIN', 1),
+        ],
+
+    ],
+
 ];
