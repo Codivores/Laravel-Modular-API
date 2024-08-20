@@ -6,11 +6,14 @@ namespace Codivores\LaravelModularApi;
 
 use Codivores\LaravelModularApi\Exceptions\Handler as ExceptionHandler;
 use Codivores\LaravelModularApi\Providers\RouteServiceProvider;
+use Codivores\LaravelModularApi\Traits\Data\HasMigrations;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Support\ServiceProvider;
 
 class LaravelModularApiServiceProvider extends ServiceProvider
 {
+    use HasMigrations;
+
     /**
      * Register any application services.
      */
@@ -34,6 +37,8 @@ class LaravelModularApiServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../config/modular-api.php' => config_path('modular-api.php'),
         ], 'modular-api-config');
+
+        $this->loadMigrations();
     }
     private function registerExceptionHandler(): void
     {
