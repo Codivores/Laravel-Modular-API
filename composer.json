@@ -32,6 +32,9 @@
     },
     "extra": {
         "laravel": {
+            "providers": [
+                "Codivores\\LaravelModularApi\\LaravelModularApiServiceProvider"
+            ],
             "aliases": {
                 "LaravelModularApi": "Codivores\\LaravelModularApi\\Facades\\LaravelModularApi"
             }
