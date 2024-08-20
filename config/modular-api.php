@@ -18,6 +18,10 @@ return [
             'enable_type_prefix' => env('MODULAR_API_ROUTING_ENABLE_TYPE_PREFIX', true),
         ],
 
+        'resource' => [
+            'custom_type_resolver' => env('MODULAR_API_RESOURCE_CUSTOM_TYPE_RESOLVER', false),
+        ],
+
     ],
 
     /*
