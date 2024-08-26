@@ -118,6 +118,8 @@ App/
     Services/
         DomainA/
             Service1/
+                Data/
+                    Migrations/
                 Http/
                     Controllers/
                     Endpoints/
