@@ -7,6 +7,7 @@ namespace Codivores\LaravelModularApi\Resources;
 use Codivores\LaravelModularApi\Traits\Features\HashId;
 use Codivores\LaravelModularApi\Traits\Resources\HasLinks;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use LaravelModularApi;
 use TiMacDonald\JsonApi\JsonApiResource;
 
@@ -30,7 +31,7 @@ class ApiResource extends JsonApiResource
     {
         return config('modular-api.api.resource.custom_type_resolver')
             ? parent::toType($request)
-            : LaravelModularApi::domainFromClass($this)
+            : Str::camel(LaravelModularApi::domainFromClass($this))
             .LaravelModularApi::resourceFromClass($this);
     }
 }
