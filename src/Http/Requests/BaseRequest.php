@@ -36,14 +36,16 @@ class BaseRequest extends FormRequest
 
         $input = $this->mergeRouteParametersWithInput($input);
 
+        $input = $this->mergeJsonApiDataWithInput($input);
+
         $input = $this->decodeHashedIds($input);
 
         return $input;
     }
 
-    public function encodedInput($key = null, $default = null): mixed
+    public function inputMerged($key = null, $default = null): mixed
     {
-        return data_get($this->all($key), $key, $default);
+        return data_get($this->all(), $key, $default);
     }
 
     private function handleRouteId(): bool
@@ -88,6 +90,24 @@ class BaseRequest extends FormRequest
         if (! empty($this->routeParameters)) {
             foreach ($this->routeParameters as $parameter) {
                 $input[$parameter] = $this->route($parameter);
+            }
+        }
+
+        return $input;
+    }
+
+    /**
+     * Add JSON:API data.attributes, data.type to Request input to allow validation rules.
+     */
+    private function mergeJsonApiDataWithInput(array $input): array
+    {
+        if (isset($input['data'])) {
+            if (isset($input['data']['attributes']) && is_array($input['data']['attributes'])) {
+                $input = array_merge_recursive($input, $input['data']['attributes']);
+            }
+
+            if (isset($input['data']['type'])) {
+                $input['type'] = $input['data']['type'];
             }
         }
 
