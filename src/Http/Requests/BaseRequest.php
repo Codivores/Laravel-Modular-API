@@ -57,6 +57,7 @@ class BaseRequest extends FormRequest
         }
 
         if ($this->isHashIdsFeatureEnabled()) {
+            // Try to find Resource from Request namespace.
             $resourceClasspath = Str::replaceLast(
                 'Http\Requests',
                 'Resources',
@@ -67,6 +68,16 @@ class BaseRequest extends FormRequest
                 'Resource',
                 $resourceClasspath
             );
+
+            if (! class_exists($resourceClasspath)) {
+                // Try to find default Service Resource.
+                $resourceClasspath = Str::before(
+                    get_class($this),
+                    'Http\Requests'
+                );
+                $resourceClasspath .= 'Resources\\'.Str::afterLast(Str::beforeLast($resourceClasspath, '\\'),
+                        '\\').'Resource';
+            }
 
             if (class_exists($resourceClasspath)) {
                 if ($resourceClasspath::$useHashIds === true) {
