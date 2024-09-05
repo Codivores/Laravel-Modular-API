@@ -5,6 +5,7 @@ namespace Codivores\LaravelModularApi\Http\Middlewares;
 use Closure;
 use Codivores\LaravelModularApi\Exceptions\LocalizationLocaleUnsupportedException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -20,7 +21,9 @@ class Localization
         if (config('modular-api.features.localization.enabled')) {
             $locale = $this->locale($this->fromHeader($request));
 
-            app()->setLocale($locale);
+            if (App::currentLocale() !== $locale) {
+                App::setLocale($locale);
+            }
 
             // Set header in Response.
             $response = $next($request);
