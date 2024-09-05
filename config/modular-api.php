@@ -50,6 +50,12 @@ return [
             'expires' => env('MODULAR_API_FEATURE_RATE_LIMITING_EXPIRES_IN_MIN', 1),
         ],
 
+        'localization' => [
+            'enabled' => env('MODULAR_API_FEATURE_LOCALIZATION_ENABLED', false),
+            'request_header' => env('MODULAR_API_FEATURE_LOCALIZATION_REQUEST_HEADER', 'Accept-Language'),
+            'locales' => env('MODULAR_API_FEATURE_LOCALIZATION_LOCALES', env('APP_LOCALE', 'en')),
+        ],
+
         'hash_ids' => [
             'enabled' => env('MODULAR_API_FEATURE_HASH_IDS_ENABLED', false),
             'salt' => env('MODULAR_API_FEATURE_HASH_IDS_KEY', env('APP_KEY')),
