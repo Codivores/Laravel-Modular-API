@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Codivores\LaravelModularApi\Traits\Http;
 
+use Codivores\LaravelModularApi\Http\Middlewares\Localization;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -72,6 +73,7 @@ trait ApiRoute
         return array_filter([
             'api',
             $this->middlewareRateLimiter(),
+            $this->middlewareLocalization(),
         ]);
     }
 
@@ -84,6 +86,15 @@ trait ApiRoute
             });
 
             return 'throttle:api';
+        }
+
+        return null;
+    }
+
+    private function middlewareLocalization(): ?string
+    {
+        if (config('modular-api.features.localization.enabled')) {
+            return Localization::class;
         }
 
         return null;
