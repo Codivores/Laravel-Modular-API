@@ -76,7 +76,7 @@ class BaseRequest extends FormRequest
                     'Http\Requests'
                 );
                 $resourceClasspath .= 'Resources\\'.Str::afterLast(Str::beforeLast($resourceClasspath, '\\'),
-                        '\\').'Resource';
+                    '\\').'Resource';
             }
 
             if (class_exists($resourceClasspath)) {
