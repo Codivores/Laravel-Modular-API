@@ -16,6 +16,8 @@ architecture.
 - **API Versioning:** Easily version your API to manage changes and ensure backward compatibility.
 - **Sub-APIs:** Create multiple sub-APIs (e.g., `public`, `protected`, `private`, ...) to handle different access
   levels and use cases.
+- **Localization:** Serve multi-language content by processing a request header that automatically sets the locale for
+  the entire request.
 
 ### Version support
 
@@ -94,6 +96,12 @@ return [
             'enabled' => env('MODULAR_API_FEATURE_RATE_LIMITING_ENABLED', false),
             'attempts' => env('MODULAR_API_FEATURE_RATE_LIMITING_ATTEMPTS_PER_MIN', 30),
             'expires' => env('MODULAR_API_FEATURE_RATE_LIMITING_EXPIRES_IN_MIN', 1),
+        ],
+
+        'localization' => [
+            'enabled' => env('MODULAR_API_FEATURE_LOCALIZATION_ENABLED', false),
+            'request_header' => env('MODULAR_API_FEATURE_LOCALIZATION_REQUEST_HEADER', 'Accept-Language'),
+            'locales' => env('MODULAR_API_FEATURE_LOCALIZATION_LOCALES', env('APP_LOCALE', 'en')),
         ],
 
         'hash_ids' => [
