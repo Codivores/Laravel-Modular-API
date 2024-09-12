@@ -30,6 +30,17 @@ trait Util
             : [];
     }
 
+    public function servicePath(string $domain, string $service): string
+    {
+        return app_path(
+            config('modular-api.services.root_path')
+            .DIRECTORY_SEPARATOR
+            .$domain
+            .DIRECTORY_SEPARATOR
+            .$service
+        );
+    }
+
     public function servicePathList(): array
     {
         $servicePathList = [];
@@ -51,6 +62,25 @@ trait Util
                 .$domain
             )
         );
+    }
+
+    public function serviceTree(): array
+    {
+        $serviceTree = [];
+
+        foreach ($this->domainNameList() as $name) {
+            $domainTree = collect($this->servicePathListForDomain($name))
+                ->map(function ($servicePath) {
+                    return basename($servicePath);
+                })
+                ->toArray();
+
+            if (count($domainTree) > 0) {
+                $serviceTree[$name] = $domainTree;
+            }
+        }
+
+        return $serviceTree;
     }
 
     public function servicesClassPathRoot(): string
