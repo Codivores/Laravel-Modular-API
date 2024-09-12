@@ -7,12 +7,13 @@ namespace Codivores\LaravelModularApi;
 use Codivores\LaravelModularApi\Exceptions\Handler as ExceptionHandler;
 use Codivores\LaravelModularApi\Providers\RouteServiceProvider;
 use Codivores\LaravelModularApi\Traits\Data\HasMigrations;
+use Codivores\LaravelModularApi\Traits\Views\HasViews;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Support\ServiceProvider;
 
 class LaravelModularApiServiceProvider extends ServiceProvider
 {
-    use HasMigrations;
+    use HasMigrations, HasViews;
 
     /**
      * Register any application services.
@@ -39,6 +40,7 @@ class LaravelModularApiServiceProvider extends ServiceProvider
         ], 'modular-api-config');
 
         $this->loadMigrations();
+        $this->loadViews();
     }
     private function registerExceptionHandler(): void
     {
