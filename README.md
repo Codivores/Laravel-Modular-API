@@ -132,7 +132,10 @@ App/
                     Controllers/
                     Endpoints/
                     Requests/
+                Mails/
+                    Templates/
                 Resources/
+                Views/
             Service2/
                 ...
         DomainB/
