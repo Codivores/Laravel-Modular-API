@@ -135,6 +135,8 @@ App/
                 Mails/
                     Templates/
                 Resources/
+                Providers/
+                    MainServiceProvider.php
                 Views/
             Service2/
                 ...
