@@ -90,6 +90,15 @@ trait Util
             .'\\';
     }
 
+    public function serviceClassPath(string $domain, string $service): string
+    {
+        return $this->servicesClassPathRoot()
+            .$domain
+            .'\\'
+            .$service
+            .'\\';
+    }
+
     public function domainFromClass(object|string $class): string
     {
         return Str::before(
