@@ -26,14 +26,17 @@ trait ApiRoute
 
     public function routeGroup(?SplFileInfo $file = null, ?string $prefix = null): array
     {
+        $prefixList = $this->apiPrefixesFromFile($file);
+
         return [
             'middleware' => $this->middlewares(),
             'domain' => LaravelModularApi::apiUrl(),
             'prefix' => LaravelModularApi::apiUrlPrefix()
                 .($prefix !== null
                     ? $prefix
-                    : $this->apiPrefixFromFile($file)
+                    : implode('/', $prefixList)
                 ),
+            'meta' => $prefixList,
         ];
     }
 
@@ -100,25 +103,25 @@ trait ApiRoute
         return null;
     }
 
-    private function apiPrefixFromFile(SplFileInfo $file): string
+    private function apiPrefixesFromFile(SplFileInfo $file): array
     {
-        if (! config('modular-api.api.routing.enable_version_prefix') && ! config('modular-api.api.routing.enable_type_prefix')) {
-            return '';
-        }
-
         $prefixList = [];
+
+        if (! config('modular-api.api.routing.enable_version_prefix') && ! config('modular-api.api.routing.enable_type_prefix')) {
+            return $prefixList;
+        }
 
         $filenameExploded = explode('.', $file->getFilenameWithoutExtension());
 
         if (config('modular-api.api.routing.enable_type_prefix') && count($filenameExploded) > 0) {
-            $prefixList[] = array_pop($filenameExploded);
+            $prefixList['type'] = array_pop($filenameExploded);
         }
 
         if (config('modular-api.api.routing.enable_version_prefix') && count($filenameExploded) > 0) {
-            $prefixList[] = array_pop($filenameExploded);
+            $prefixList['version'] = array_pop($filenameExploded);
         }
 
-        return implode('/', $prefixList);
+        return $prefixList;
     }
 
     public function registerMacros(): void
@@ -139,8 +142,25 @@ trait ApiRoute
             }
 
             $routePrefix = LaravelModularApi::apiRoutePrefix();
-            $domainName = LaravelModularApi::domainSlug($domain);
-            $endpointName = LaravelModularApi::resourceSlug($resource ?? $service);
+            if ($this->hasGroupStack()) {
+                $type = data_get($this->getGroupStack(), '0.meta.type');
+                if ($type !== null) {
+                    $routePrefix .= $type.'.';
+                }
+            }
+
+            $domainName = (isset($options['uriDomain']) && ! empty($options['uriDomain']))
+                ? $options['uriDomain']
+                : ((($options['withoutDomain'] ?? false) === true)
+                    ? ''
+                    : LaravelModularApi::domainSlug($domain)
+                );
+            $endpointName = (isset($options['uriEndpoint']) && ! empty($options['uriEndpoint']))
+                ? $options['uriEndpoint']
+                : ((($options['withoutService'] ?? false) === true)
+                    ? ''
+                    : LaravelModularApi::resourceSlug($resource ?? $service)
+                );
             $resourceName = Str::studly($resource ?? $service);
 
             $controllerClassPath = LaravelModularApi::servicesClassPathRoot()
@@ -149,10 +169,10 @@ trait ApiRoute
                 .'\\Http\Controllers\\';
 
             Route::prefix($domainName)
-                ->name($routePrefix.$domainName.'.')
+                ->name($routePrefix.(empty($domainName) ? '' : $domainName.'.'))
                 ->group(function () use ($options, $actionList, $endpointName, $resourceName, $controllerClassPath) {
                     Route::prefix($endpointName)
-                        ->name($endpointName.'.')
+                        ->name((empty($endpointName) ? '' : $endpointName.'.'))
                         ->group(function () use ($options, $actionList, $resourceName, $controllerClassPath) {
                             foreach ($actionList as $actionName => $actionArgs) {
                                 Route::{$actionArgs['method']}(($actionArgs['uri'] ?? ''),
