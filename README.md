@@ -126,6 +126,7 @@ App/
     Services/
         DomainA/
             Service1/
+                Config/
                 Data/
                     Migrations/
                 Http/
@@ -134,6 +135,7 @@ App/
                     Requests/
                 Mails/
                     Templates/
+                Models/
                 Resources/
                 Providers/
                     MainServiceProvider.php
