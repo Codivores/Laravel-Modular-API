@@ -249,24 +249,24 @@ trait ApiRoute
 
             // Create routes.
             Route::prefix($domainName)
-                ->middleware($authMiddleware)
+                ->middleware(array_merge(Arr::wrap($authMiddleware), ($options['middlewares'] ?? [])))
                 ->name($routePrefix.(empty($domainName) ? '' : $domainName.'.'))
                 ->group(function () use ($options, $actionList, $endpointName, $resourceName, $controllerClassPath) {
                     Route::prefix($endpointName)
                         ->name((empty($endpointName) ? '' : $endpointName.'.'))
                         ->group(function () use ($options, $actionList, $resourceName, $controllerClassPath) {
-                            // Actions routes.
-                            foreach ($actionList as $actionName => $actionArgs) {
-                                Route::{$actionArgs['method']}(($actionArgs['uri'] ?? ''),
-                                    $controllerClassPath.$resourceName.Str::studly($actionName).'Controller')->name($actionName);
-                            }
-
                             // Extra Actions routes.
                             if (is_array($options['extraActions'] ?? null) && count($options['extraActions']) > 0) {
                                 foreach ($options['extraActions'] as $actionName => $actionArgs) {
                                     Route::{$actionArgs['method']}(($actionArgs['uri'] ?? ''),
                                         $controllerClassPath.$resourceName.Str::studly($actionName).'Controller')->name($actionName);
                                 }
+                            }
+
+                            // Actions routes.
+                            foreach ($actionList as $actionName => $actionArgs) {
+                                Route::{$actionArgs['method']}(($actionArgs['uri'] ?? ''),
+                                    $controllerClassPath.$resourceName.Str::studly($actionName).'Controller')->name($actionName);
                             }
                         });
                 });
