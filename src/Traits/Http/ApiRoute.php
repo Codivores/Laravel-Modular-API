@@ -126,7 +126,77 @@ trait ApiRoute
 
     public function registerMacros(): void
     {
+        Route::macro('authenticatedEndpoint', function ($domain, $service, $resource = null, $action = null, $options = []) {
+            $options['auth'] = true;
+
+            Route::endpoint(
+                domain: $domain,
+                service: $service,
+                resource: $resource,
+                action: $action,
+                options: $options,
+            );
+        });
+
+        Route::macro('guestEndpoint', function ($domain, $service, $resource = null, $action = null, $options = []) {
+            $options['auth'] = false;
+
+            Route::endpoint(
+                domain: $domain,
+                service: $service,
+                resource: $resource,
+                action: $action,
+                options: $options,
+            );
+        });
+
+        Route::macro('endpoint', function ($domain, $service, $resource = null, $action = null, $options = []) {
+            $options['extraActions'] = [
+                $action => [
+                    'method' => $options['method'] ?? 'GET',
+                    'uri' => $options['uri'] ?? $action,
+                ],
+            ];
+            $options['actions'] = [];
+
+            Route::endpoints(
+                domain: $domain,
+                service: $service,
+                resource: $resource,
+                options: $options,
+            );
+        });
+
+        Route::macro('authenticatedEndpoints', function ($domain, $service, $resource = null, $options = []) {
+            $options['auth'] = true;
+
+            Route::endpoints(
+                domain: $domain,
+                service: $service,
+                resource: $resource,
+                options: $options,
+            );
+        });
+
+        Route::macro('guestEndpoints', function ($domain, $service, $resource = null, $options = []) {
+            $options['auth'] = false;
+
+            Route::endpoints(
+                domain: $domain,
+                service: $service,
+                resource: $resource,
+                options: $options,
+            );
+        });
+
         Route::macro('endpoints', function ($domain, $service, $resource = null, $options = []) {
+            // Retrieve API type: used in route prefix, authentication middleware.
+            $apiType = null;
+            if ($this->hasGroupStack()) {
+                $apiType = data_get($this->getGroupStack(), '0.meta.type');
+            }
+
+            // Prepare actions.
             $actionDefaultList = [
                 'get' => ['method' => 'get'],
                 'find' => ['method' => 'get', 'uri' => '{'.($options['identifier'] ?? 'id').'}'],
@@ -141,14 +211,23 @@ trait ApiRoute
                 $actionList = $actionDefaultList;
             }
 
+            // Define route prefix.
             $routePrefix = LaravelModularApi::apiRoutePrefix();
-            if ($this->hasGroupStack()) {
-                $type = data_get($this->getGroupStack(), '0.meta.type');
-                if ($type !== null) {
-                    $routePrefix .= $type.'.';
+            if ($apiType !== null) {
+                $routePrefix .= $apiType.'.';
+            }
+
+            // Define authentication middleware.
+            $authMiddleware = [];
+            if (isset($options['auth'])) {
+                if ($options['auth'] === true) {
+                    $authMiddleware = 'auth:api'.($apiType ? '-'.$apiType : '');
+                } elseif ($options['auth'] === false) {
+                    $authMiddleware = 'guest:api'.($apiType ? '-'.$apiType : '');
                 }
             }
 
+            // Compute variables.
             $domainName = (isset($options['uriDomain']) && ! empty($options['uriDomain']))
                 ? $options['uriDomain']
                 : ((($options['withoutDomain'] ?? false) === true)
@@ -168,17 +247,21 @@ trait ApiRoute
                 .'\\'.Str::studly($service)
                 .'\\Http\Controllers\\';
 
+            // Create routes.
             Route::prefix($domainName)
+                ->middleware($authMiddleware)
                 ->name($routePrefix.(empty($domainName) ? '' : $domainName.'.'))
                 ->group(function () use ($options, $actionList, $endpointName, $resourceName, $controllerClassPath) {
                     Route::prefix($endpointName)
                         ->name((empty($endpointName) ? '' : $endpointName.'.'))
                         ->group(function () use ($options, $actionList, $resourceName, $controllerClassPath) {
+                            // Actions routes.
                             foreach ($actionList as $actionName => $actionArgs) {
                                 Route::{$actionArgs['method']}(($actionArgs['uri'] ?? ''),
                                     $controllerClassPath.$resourceName.Str::studly($actionName).'Controller')->name($actionName);
                             }
 
+                            // Extra Actions routes.
                             if (is_array($options['extraActions'] ?? null) && count($options['extraActions']) > 0) {
                                 foreach ($options['extraActions'] as $actionName => $actionArgs) {
                                     Route::{$actionArgs['method']}(($actionArgs['uri'] ?? ''),
