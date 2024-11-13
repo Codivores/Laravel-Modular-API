@@ -45,7 +45,7 @@ trait HashId
     {
         return new Hashids(
             $options['salt'] ?? config('modular-api.features.hash_ids.salt'),
-            $options['length'] ?? config('modular-api.features.hash_ids.length'),
+            $options['length'] ?? (int) config('modular-api.features.hash_ids.length'),
             $options['alphabet'] ?? config('modular-api.features.hash_ids.alphabet'),
         );
     }
