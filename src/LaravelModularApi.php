@@ -27,4 +27,9 @@ class LaravelModularApi
             ? Str::finish(config('modular-api.api.routing.route_prefix'), '.')
             : '';
     }
+
+    public function webUrl(): string
+    {
+        return config('modular-api.web.routing.url', '');
+    }
 }
