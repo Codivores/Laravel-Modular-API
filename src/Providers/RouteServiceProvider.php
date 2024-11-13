@@ -13,7 +13,7 @@ class RouteServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        $this->registerMacros();
-        $this->loadRoutes();
+        $this->registerApiMacros();
+        $this->loadApiRoutes();
     }
 }

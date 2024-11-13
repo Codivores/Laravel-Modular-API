@@ -17,19 +17,19 @@ use Symfony\Component\Finder\SplFileInfo;
 
 trait ApiRoute
 {
-    public function loadRoutes(): void
+    public function loadApiRoutes(): void
     {
         foreach (LaravelModularApi::servicePathList() as $servicePath) {
-            $this->loadServiceRoutes($servicePath);
+            $this->loadServiceApiRoutes($servicePath);
         }
     }
 
-    public function routeGroup(?SplFileInfo $file = null, ?string $prefix = null): array
+    public function apiRouteGroup(?SplFileInfo $file = null, ?string $prefix = null): array
     {
         $prefixList = $this->apiPrefixesFromFile($file);
 
         return [
-            'middleware' => $this->middlewares(),
+            'middleware' => $this->apiMiddlewares(),
             'domain' => LaravelModularApi::apiUrl(),
             'prefix' => LaravelModularApi::apiUrlPrefix()
                 .($prefix !== null
@@ -40,7 +40,7 @@ trait ApiRoute
         ];
     }
 
-    private function loadServiceRoutes(string $servicePath): void
+    private function loadServiceApiRoutes(string $servicePath): void
     {
         $routesPath = $servicePath.DIRECTORY_SEPARATOR.'Http'.DIRECTORY_SEPARATOR.'Endpoints';
 
@@ -57,21 +57,21 @@ trait ApiRoute
                     });
 
             foreach ($files as $file) {
-                $this->loadServiceRoutesFromFile($file);
+                $this->loadServiceApiRoutesFromFile($file);
             }
         }
     }
 
-    private function loadServiceRoutesFromFile(SplFileInfo $file): void
+    private function loadServiceApiRoutesFromFile(SplFileInfo $file): void
     {
-        $routeGroupArray = $this->routeGroup(file: $file);
+        $routeGroupArray = $this->apiRouteGroup(file: $file);
 
         Route::group($routeGroupArray, function ($router) use ($file) {
             require $file->getPathname();
         });
     }
 
-    private function middlewares(): array
+    private function apiMiddlewares(): array
     {
         return array_filter([
             'api',
@@ -124,7 +124,7 @@ trait ApiRoute
         return $prefixList;
     }
 
-    public function registerMacros(): void
+    public function registerApiMacros(): void
     {
         Route::macro('authenticatedEndpoint', function ($domain, $service, $resource = null, $action = null, $options = []) {
             $options['auth'] = true;
