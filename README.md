@@ -147,6 +147,7 @@ App/
                     Controllers/
                     Endpoints/
                     Requests/
+                    WebEndpoints/
                 Mails/
                     Templates/
                 Models/
