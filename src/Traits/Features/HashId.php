@@ -52,7 +52,7 @@ trait HashId
 
     private function isHashIdsFeatureEnabled(): bool
     {
-        $enabled = config('modular-api.features.hash_ids.enabled', false) && self::$useHashIds;
+        $enabled = config('modular-api.features.hash_ids.enabled', false) && static::$useHashIds;
 
         throw_if($enabled && ! class_exists(Hashids::class),
             new FeatureInvalidException('Hashids package is not installed or loaded.'));
