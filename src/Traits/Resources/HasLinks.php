@@ -31,7 +31,7 @@ trait HasLinks
         }
 
         return route(
-            ($prefix ?? LaravelModularApi::apiRoutePrefix())
+            ($prefix ?? (LaravelModularApi::apiRoutePrefix().($request->has('api_type') ? $request->input('api_type').'.' : '')))
             .$route
             .($action ? '.'.$action : '.find'),
             $this->selfRouteId($request)
